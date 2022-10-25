@@ -1,0 +1,20 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon server.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@fastify/cors": "^8.1.0",
+        "@fastify/multipart": "^7.2.0",
+        "@fastify/static": "^6.5.0",
+        "fastify": "^4.9.2",
+        "jsoning": "^0.13.23",
+        "sharp": "^0.31.1",
+        "uuid": "^9.0.0"
+    }
+}
