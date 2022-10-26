@@ -27,6 +27,16 @@
         .brick-source-reset {
             cursor: pointer;
         }
+
+        .navbar-tui {
+            background-color: rgba(255, 255, 255, 0.5)
+        }
+        .wall .label {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            z-index: 1000;
+        }
     </style>
 </head>
 
@@ -50,6 +60,16 @@
         </div>
     </nav>
     <div class="view wall">
+        <div class="canvas-container"></div>
+        <div class="label col-md-3">
+            <div class="card m-3">
+                <div class="card-body">
+                  <h5 class="card-title certification-name">Certification Name</h5>
+                  <h6 class="card-subtitle mb-2 text-muted certification-provider">Certification provider</h6>
+                  <p class="card-text"><span class="badge bg-secondary certification-category">Certification Category</span></p>
+                </div>
+              </div>
+        </div>
     </div>
     <div class="container view stats mt-5 d-none">
         <div class="row">

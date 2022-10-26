@@ -16,5 +16,11 @@
         "jsoning": "^0.13.23",
         "sharp": "^0.31.1",
         "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "standard": "^17.0.0"
+    },
+    "nodemonConfig": {
+        "ignore": ["data/*", "files/*"]
     }
 }
