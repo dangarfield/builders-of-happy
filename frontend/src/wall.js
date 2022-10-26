@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+// import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 import * as TWEEN from '@tweenjs/tween.js'
 import { backendUrl } from './utils'
 
@@ -126,15 +128,11 @@ const initScene = async (imageData, certificationData) => {
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
   const light = new THREE.DirectionalLight(0xFFFFFF, 20)
-  light.position.set(0, 1, 0).normalize()
-
-  // light.position.x = imageData.width / 2
-  // light.position.y = imageData.height / 2
-  // light.position.z = Z_HEIGHT
+  light.position.set(0.5, 1, 1).normalize()
   scene.add(light)
 
-  const am = new THREE.AmbientLight(0xffffff, 8)
-  scene.add(am)
+  // const am = new THREE.AmbientLight(0xffffff, 12)
+  // scene.add(am)
 
   // Create a renderer with Antialiasing
   const renderer = new THREE.WebGLRenderer({
@@ -151,6 +149,16 @@ const initScene = async (imageData, certificationData) => {
 
   // Append Renderer to DOM
   document.querySelector('.view.wall .canvas-container').appendChild(renderer.domElement)
+
+  const stats = Stats()
+  document.body.appendChild(stats.dom)
+
+  // const controls = new FlyControls(camera, renderer.domElement)
+  // controls.movementSpeed = 1000
+  // controls.domElement = renderer.domElement
+  // controls.rollSpeed = Math.PI / 24
+  // controls.autoForward = false
+  // controls.dragToLook = false
 
   // ------------------------------------------------
   // FUN STARTS HERE
@@ -199,7 +207,24 @@ const initScene = async (imageData, certificationData) => {
     return b.geometry.applyMatrix4(b.matrixWorld)
   }), true)
 
-  console.log('THREE', THREE, mergeBufferGeometries, legoGeometry)
+  // console.log('THREE', THREE, mergeBufferGeometries, legoGeometry)
+
+  const border = 40
+  const borderPositions = []
+  for (let x = -border; x < imageData.width + border; x++) {
+    for (let y = -border; y < imageData.height + border; y++) {
+      let add = false
+      if (x < 0) { add = true }
+      if (y < 0) { add = true }
+      if (imageData.width <= x) { add = true }
+      if (imageData.height <= y) { add = true }
+      if (add) {
+        // console.log('border', x, y, add)
+        borderPositions.push({ x, y })
+      }
+    }
+  }
+  console.log('borderPositions', borderPositions, borderPositions.length)
 
   const count = imageData.width * imageData.height
   console.log('count', count)
@@ -214,8 +239,8 @@ const initScene = async (imageData, certificationData) => {
   const quaternion = new THREE.Quaternion()
   quaternion.setFromEuler(rotation)
   for (let i = 0; i < count; i++) {
-    const x = i % imageData.width
-    const y = i / imageData.width
+    const x = Math.floor(i % imageData.width)
+    const y = Math.floor(i / imageData.width)
     const z = Math.random() * 0
     const colorIndex = i * 4
     const r = imageData.data[colorIndex]
@@ -239,6 +264,27 @@ const initScene = async (imageData, certificationData) => {
   }
   scene.add(mesh)
 
+  const borderMesh = new THREE.InstancedMesh(legoGeometry, material, count)
+  const borderColor = new THREE.Color('rgb(100,100,100)')
+  borderColor.convertSRGBToLinear()
+  for (let i = 0; i < borderPositions.length; i++) {
+    const position = new THREE.Vector3()
+    position.x = borderPositions[i].x
+    position.y = -borderPositions[i].y
+    position.z = 0
+    if (i < 2) {
+      console.log('position', position)
+    }
+
+    matrix.compose(position, quaternion, new THREE.Vector3(1, 1, 1))
+
+    borderMesh.setMatrixAt(i, matrix)
+    // color = new THREE.Color( 0xffffff );
+    // color.setHex( Math.random() * 0xffffff );
+    borderMesh.setColorAt(i, borderColor)
+  }
+
+  scene.add(borderMesh)
   // scene.add(new THREE.AxesHelper(5))wdsaw
   // Add cube to Scene
 
@@ -258,25 +304,33 @@ const initScene = async (imageData, certificationData) => {
   // plane.position.z = -40
   // plane.overdraw = true;
   // scene.add(plane);
+  // const clock = new THREE.Clock()
 
   const render = function () {
     window.requestAnimationFrame(render)
+    // const delta = clock.getDelta()
     TWEEN.default.update()
+    // controls.update(delta)
     renderer.render(scene, camera)
+    stats.update()
   }
+  const onWindowResize = () => {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(window.innerWidth, window.innerHeight)
+  }
+  window.addEventListener('resize', onWindowResize, false)
 
   render()
 
-  const rows = Math.floor(imageData.width / BRICK_SIZE.width)
-  const cols = imageData.height / BRICK_SIZE.height
-  const max = rows * cols
-  console.log('max', rows, cols, rows * cols, certificationData.length)
+  // await rotateCamera(0, certificationData, true)
+
+  const max = certificationData.length
+  console.log('max', max)
   let current = Math.floor(Math.random() * max)
   let next = Math.floor(Math.random() * max)
-
-  // await cameraTo(0)
   await rotateCamera(current, certificationData, true)
-
   while (true) {
     await moveCameraTo(current, next)
     await rotateCamera(next, certificationData)

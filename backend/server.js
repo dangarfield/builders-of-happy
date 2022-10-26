@@ -26,7 +26,7 @@ fastify.get('/certifications/:user', async (req, reply) => {
   if (!userRecord) {
     userRecord = { user, certifications: [] }
   }
-  console.log('userRecord', user, userRecord)
+  // console.log('userRecord', user, userRecord)
   return userRecord
 })
 

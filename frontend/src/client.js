@@ -1,4 +1,4 @@
-import { bindLogin } from './login'
+import { bindLogin, login } from './login'
 import { showHideView } from './utils'
 import { bindBrickSources } from './certifications'
 import { initWall } from './wall'
