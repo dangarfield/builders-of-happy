@@ -36,9 +36,16 @@ const initScene = async (imageData, certificationData) => {
       const centreTarget = new THREE.Vector3(c.x, c.y, 0)
       camera.lookAt(centreTarget)
 
+      const cert = certificationData[i]
+      // console.log('cert', cert)
+      document.querySelector('.wall .label .certification-name').textContent = cert.name
+      document.querySelector('.wall .label .certification-provider').textContent = cert.provider
+      document.querySelector('.wall .label .certification-category').textContent = cert.category
+
       if (disableRotate) {
         resolve()
       } else {
+        document.querySelector('.wall .label').style.opacity = 1
         new TWEEN.Tween(camera.position).to({
           x: [tl.x, tr.x, br.x, bl.x],
           y: [tl.y, tr.y, br.y, bl.y]
@@ -54,9 +61,11 @@ const initScene = async (imageData, certificationData) => {
           .interpolation(TWEEN.Interpolation.CatmullRom)
           .onStop(() => {
             console.log('cameraTo: END')
+            document.querySelector('.wall .label').style.opacity = 0
             resolve()
           }).onComplete(() => {
             console.log('moveCameraTo: END')
+            document.querySelector('.wall .label').style.opacity = 0
             resolve()
           })
         // .delay(1000)
@@ -69,7 +78,7 @@ const initScene = async (imageData, certificationData) => {
     return new Promise(resolve => {
       const targetC = getBrickCameraPositions(fromI).c
       const { c, bl } = getBrickCameraPositions(toI)
-      console.log('camera', camera)
+      // console.log('camera', camera)
       const tweenTarget = {
         x: camera.position.x,
         y: camera.position.y,

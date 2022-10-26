@@ -73,6 +73,7 @@ fastify.post('/certifications/:user', async (req, reply) => {
       console.log('addCertification', user, userRecord)
       await db.set(user, userRecord)
 
+      combineImages()
       return userRecord
     }
   } catch (error) {
@@ -102,6 +103,7 @@ fastify.delete('/certifications/:user/:id', async (req, reply) => {
   await db.set(user, userRecord)
 
   // console.log('delete cert userRecord', user, userRecord)
+  combineImages()
   return userRecord
 })
 
