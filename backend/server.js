@@ -122,7 +122,9 @@ const combineImages = async () => {
 
   console.log('allCerts', allCerts, allCerts.length)
 
-  fs.writeFileSync(path.join('files', 'certification-data.json'), JSON.stringify(allCerts), 'utf-8')
+  fs.writeFileSync(path.join('files', 'certification-data.json'), JSON.stringify({ certifications: allCerts }), 'utf-8')
+
+  // 48 * 27
 
   // let files = []
   // const filesTemp = fs.readdirSync('files').filter(f => f !== 'all-bricks.png').map(f => path.join('files', f))
@@ -132,15 +134,14 @@ const combineImages = async () => {
   //   files = files.concat(filesTemp)
   // }
   const total = files.length
-  const rowCount = Math.ceil(files.length / 9)
-  const lineCount = Math.ceil(total / rowCount)
+  // const rowCount = Math.ceil(files.length / 9)
+  // const lineCount = Math.ceil(total / rowCount)
   const firstImage = await sharp(files[0])
   const { width, height } = await firstImage.metadata()
 
   const combine = files.map((f, i) => {
-    const row = Math.floor(i / rowCount)
-    const left = Math.floor(i % rowCount) * width + row % 2 * (width / 2)
-    const top = row * height
+    const left = 0
+    const top = i * height
     return {
       input: f,
       left,
@@ -148,11 +149,11 @@ const combineImages = async () => {
     }
   })
   console.log('combineImages', combine.length)
-  console.log('w', width, 'h', height, 'rowCount', rowCount, 'lineCount', lineCount, 'total', total)
+  console.log('w', width, 'h', height, 'total', total)
   await sharp({
     create: {
-      width: (rowCount * width) + width / 2,
-      height: lineCount * height,
+      width,
+      height: total * height,
       channels: 4,
       background: { r: 100, g: 100, b: 100, alpha: 1 }
     }
