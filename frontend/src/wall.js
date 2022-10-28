@@ -220,6 +220,7 @@ const initScene = async (certificationData) => {
   }
 
   const borderPositionsAll = [borderPositionsLeft, borderPositionsRight, borderPositionTop, borderPositionBottom]
+  // const borderPositionsAll = []
   for (const borderPositions of borderPositionsAll) {
     const borderMesh = new THREE.InstancedMesh(legoGeometry, material, borderPositions.length)
     const borderColor = new THREE.Color('rgb(100,100,100)')
@@ -235,13 +236,16 @@ const initScene = async (certificationData) => {
     }
     scene.add(borderMesh)
   }
+  console.log('total instances', certificationData.certifications[0].imageData.width * certificationData.certifications[0].imageData.height * certificationData.certifications.length)
+  // const count = certificationData.certifications[0].imageData.width * certificationData.certifications[0].imageData.height * certificationData.certifications.length
+  // const mesh = new THREE.InstancedMesh(legoGeometry, material, count)
+  // let i = 0
   for (const certification of certificationData.certifications) {
     const count = certification.imageData.width * certification.imageData.height
+    const mesh = new THREE.InstancedMesh(legoGeometry, material, count)
     // console.log(i, certification, count)
 
-    const mesh = new THREE.InstancedMesh(legoGeometry, material, count)
-
-    for (let j = 0; j < count; j++) {
+    for (let j = 0; j < certification.imageData.width * certification.imageData.height; j++) {
       const x = Math.floor(j % certification.imageData.width)
       const y = Math.floor(j / certification.imageData.width)
       const z = Math.random() * 0
@@ -261,10 +265,12 @@ const initScene = async (certificationData) => {
       matrix.compose(position, quaternion, new THREE.Vector3(1, 1, 1))
       mesh.setMatrixAt(j, matrix)
       mesh.setColorAt(j, color)
+      // i++
     }
     mesh.position.set(certification.x, certification.y, 0)
     scene.add(mesh)
   }
+  // scene.add(mesh)
   // scene.add(borderMesh)
   scene.add(new THREE.AxesHelper(5))
   // Add cube to Scene
