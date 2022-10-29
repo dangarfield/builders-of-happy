@@ -248,15 +248,13 @@ const initScene = async (certificationData) => {
     for (let j = 0; j < certification.imageData.width * certification.imageData.height; j++) {
       const x = Math.floor(j % certification.imageData.width)
       const y = Math.floor(j / certification.imageData.width)
-      const z = Math.random() * 0
+      const z = Math.random() * 0 // 0.5
       const colorIndex = j * 4
       const r = certification.imageData.data[colorIndex]
       const g = certification.imageData.data[colorIndex + 1]
       const b = certification.imageData.data[colorIndex + 2]
       const color = new THREE.Color(`rgb(${r},${g},${b})`)
       color.convertSRGBToLinear()
-      // console.log('color', i, 'index', colorIndex, colorIndex+1, colorIndex+2, 'rgb', r,g,b)
-      // randomizeMatrix( i, matrix );
       const position = new THREE.Vector3()
       position.x = x
       position.y = -y
