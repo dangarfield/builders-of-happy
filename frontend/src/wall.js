@@ -187,8 +187,8 @@ const initScene = async (certificationData) => {
   const baseBottom = -certificationData.height * certificationData.cols
   for (let x = baseL; x < maxL / 2; x++) {
     for (let y = 0; y > baseBottom; y--) {
-      const r = Math.floor(y / certificationData.height) % 2 === 0
-      if (x > 0 && !r) continue
+      const r = Math.floor((y - 1) / certificationData.height) % 2 === 0
+      if (x >= 0 && !r) continue
       // console.log('x y', x, y, 'r', r)
       borderPositionsLeft.push({ x, y })
     }
@@ -198,7 +198,7 @@ const initScene = async (certificationData) => {
   const maxR = baseR + (certificationData.width / 2) + border
   for (let x = baseR; x < maxR; x++) {
     for (let y = 0; y > baseBottom; y--) {
-      const r = Math.floor(y / certificationData.height) % 2 === 0
+      const r = Math.floor((y - 1) / certificationData.height) % 2 === 0
       if (x < baseR + (certificationData.width / 2) && r) continue
       // console.log('x y', x, y, 'r', r)
       borderPositionsRight.push({ x, y })
@@ -206,7 +206,7 @@ const initScene = async (certificationData) => {
   }
   const borderPositionTop = []
   for (let x = baseL; x < maxR; x++) {
-    for (let y = 0; y < border; y++) {
+    for (let y = 1; y < border; y++) {
       borderPositionTop.push({ x, y })
     }
   }
@@ -311,7 +311,7 @@ const initScene = async (certificationData) => {
 
   render()
 
-  // await rotateCamera(0, certificationData, true)
+  // await rotateCamera(17, certificationData, false)
 
   const max = certificationData.certifications.length
   console.log('max', max)
