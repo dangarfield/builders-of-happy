@@ -115,7 +115,7 @@ const combineImages = async () => {
     delete c.imageData
     return c
   }).sort((a, b) => a.id.localeCompare(b.id))
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 20; i++) {
     // console.log('concat')
     allCerts = allCerts.concat(tempCerts)
   }

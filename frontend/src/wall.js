@@ -8,6 +8,42 @@ import { backendUrl } from './utils'
 const Z_HEIGHT = 40
 
 const initScene = async (certificationData) => {
+  // Render 360 section of lego blocks (Ideally up to 1000s)
+  // Each block is a mergeGeo of a simple cube and cylinder
+  // Each section contains 1297 (48 * 27) blocks
+  // Each section is an instanced mesh with matrixes updated to set position and color, all static
+
+  const renderCertifications = (certificationData) => {
+    for (const certification of certificationData.certifications) {
+      const count = certification.imageData.width * certification.imageData.height
+      const mesh = new THREE.InstancedMesh(legoGeometry, material, count)
+      // console.log(i, certification, count)
+
+      for (let j = 0; j < certification.imageData.width * certification.imageData.height; j++) {
+        const x = Math.floor(j % certification.imageData.width)
+        const y = Math.floor(j / certification.imageData.width)
+        const z = Math.random() * 0 // 0.5
+        const colorIndex = j * 4
+        const r = certification.imageData.data[colorIndex]
+        const g = certification.imageData.data[colorIndex + 1]
+        const b = certification.imageData.data[colorIndex + 2]
+        const color = new THREE.Color(`rgb(${r},${g},${b})`)
+        color.convertSRGBToLinear()
+        const position = new THREE.Vector3()
+        position.x = x
+        position.y = -y
+        position.z = z
+
+        matrix.compose(position, quaternion, new THREE.Vector3(1, 1, 1))
+        mesh.setMatrixAt(j, matrix)
+        mesh.setColorAt(j, color)
+        // i++
+      }
+      mesh.position.set(certification.x, certification.y, 0)
+      scene.add(mesh)
+    }
+  }
+
   const getBrickCameraPositions = (i, certificationData) => {
     const certification = certificationData.certifications[i]
     const cameraOffset = 6
@@ -240,34 +276,9 @@ const initScene = async (certificationData) => {
   // const count = certificationData.certifications[0].imageData.width * certificationData.certifications[0].imageData.height * certificationData.certifications.length
   // const mesh = new THREE.InstancedMesh(legoGeometry, material, count)
   // let i = 0
-  for (const certification of certificationData.certifications) {
-    const count = certification.imageData.width * certification.imageData.height
-    const mesh = new THREE.InstancedMesh(legoGeometry, material, count)
-    // console.log(i, certification, count)
 
-    for (let j = 0; j < certification.imageData.width * certification.imageData.height; j++) {
-      const x = Math.floor(j % certification.imageData.width)
-      const y = Math.floor(j / certification.imageData.width)
-      const z = Math.random() * 0 // 0.5
-      const colorIndex = j * 4
-      const r = certification.imageData.data[colorIndex]
-      const g = certification.imageData.data[colorIndex + 1]
-      const b = certification.imageData.data[colorIndex + 2]
-      const color = new THREE.Color(`rgb(${r},${g},${b})`)
-      color.convertSRGBToLinear()
-      const position = new THREE.Vector3()
-      position.x = x
-      position.y = -y
-      position.z = z
+  renderCertifications(certificationData)
 
-      matrix.compose(position, quaternion, new THREE.Vector3(1, 1, 1))
-      mesh.setMatrixAt(j, matrix)
-      mesh.setColorAt(j, color)
-      // i++
-    }
-    mesh.position.set(certification.x, certification.y, 0)
-    scene.add(mesh)
-  }
   // scene.add(mesh)
   // scene.add(borderMesh)
   scene.add(new THREE.AxesHelper(5))
