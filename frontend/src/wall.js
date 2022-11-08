@@ -196,7 +196,7 @@ const initScene = async (certificationData) => {
   })
   material.color.convertSRGBToLinear()
 
-  const boxGeometry = new THREE.BoxGeometry(1, 2, 1)
+  const boxGeometry = new THREE.BoxGeometry(0.999, 2, 0.999)
   const box = new THREE.Mesh(boxGeometry, material)
   const cylinderGeometry = new THREE.CylinderGeometry(0.35, 0.35, 0.4, 15)
   const cylinder = new THREE.Mesh(cylinderGeometry, material)
